@@ -1,0 +1,12 @@
+ipch
+*.opendb
+*.exe
+*.ilk
+*.pdb
+*.db
+*.tlog
+*.cpp
+*.log
+*.obj
+*.idb
+Plist/.vs/Plist/v15/.suo
