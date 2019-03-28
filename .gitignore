@@ -9,3 +9,4 @@ ipch
 *.obj
 *.idb
 Plist/.vs/Plist/v15/.suo
+*.enc
