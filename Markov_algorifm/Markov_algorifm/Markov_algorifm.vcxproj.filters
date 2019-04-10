@@ -18,12 +18,15 @@
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="Markov.cpp">
+    <ClCompile Include="MarkovString.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Markov.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="MarkovString.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

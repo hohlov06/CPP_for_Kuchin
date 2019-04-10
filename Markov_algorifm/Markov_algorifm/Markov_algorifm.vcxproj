@@ -116,10 +116,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Markov.cpp" />
+    <ClCompile Include="MarkovString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Markov.h" />
+    <ClInclude Include="MarkovString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
