@@ -3,12 +3,14 @@
 #include <algorithm>
 #include "engcount.h"
 
+namespace WordCount{
+
     WordCounter::WordCounter(const char* text_path,
                              const char* stop_path,
                              const char* output_path = "output.txt",
-                             std::locale locale = std::locale("English")) : m_locale(locale),
-                                                                            m_apostrophe(-110)// TODO зависит от кодировки
+                             std::locale locale = WordConstants::loc_en) : m_apostrophe(-110)// TODO зависит от кодировки
     {
+        set_locale(locale);
         read_stop(stop_path);
         read_text(text_path);
         write_sorted(output_path);
@@ -93,7 +95,7 @@
     }
 
 
-    void WordCounter::write_alphabetical(const char* output_path)
+    void WordCounter::write_chronological(const char* output_path)
     {
         std::fstream text_str;
         text_str.imbue(m_locale);
@@ -105,6 +107,34 @@
             for (const auto& item : m_counter)
             {
                 text_str << item.first << " " << item.second << '\n';
+            }
+            text_str.close();
+        }
+    }
+
+
+    void WordCounter::write_alphabetical(const char* output_path)
+    {
+        using map_ptr = std::pair<const std::string, int>*;
+        std::vector<map_ptr> sorted_map;
+        sorted_map.reserve(m_counter.size());
+        for (auto it = m_counter.begin(); it != m_counter.end(); it++)
+        {
+            sorted_map.push_back(&(*it));
+        }
+
+        sort(sorted_map.begin(), sorted_map.end(),
+            [](map_ptr lhs, map_ptr rhs) {return rhs->first > lhs->first; });
+        std::fstream text_str;
+        text_str.imbue(m_locale);
+
+        if (!text_str.is_open())
+        {
+            text_str.clear();
+            text_str.open(output_path, std::ios::out);
+            for (map_ptr item : sorted_map)
+            {
+                text_str << item->first << " " << item->second << '\n';
             }
             text_str.close();
         }
@@ -144,6 +174,12 @@
     void WordCounter::set_locale(std::locale locale)
     {
         m_locale = locale;
+        if (locale == WordConstants::loc_en)
+            m_locale_str = "en";
+        else if (locale == WordConstants::loc_ru)
+            m_locale_str = "ru";
+        else
+            throw("invalid_argument");
     }
 
 
@@ -226,8 +262,8 @@
 
     bool WordCounter::isValid(char sym)
     {
-        return (m_locale == std::locale("English")) ? isValid_en(sym) :
-            (m_locale == std::locale("Russian")) ? isValid_ru(sym) : throw("invalid_argument");
+        return (m_locale_str == "en") ? isValid_en(sym) :
+               (m_locale_str == "ru") ? isValid_ru(sym) : throw("invalid_argument");
     }
 
     bool WordCounter::isValid_en(char sym)
@@ -257,3 +293,6 @@
                 ((sym >= '<') && (sym <= '>')) ||
                 (sym != '@')                     */);
     }
+
+
+    };

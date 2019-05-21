@@ -1,12 +1,21 @@
 #pragma once
 #include <fstream>
-#include <map>
-#include <set>
+#include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <locale>
 
 //#include <array>
-//constexpr std::array<const char*, 2> encoding_array = { "en_US.UTF8", "ru_RU.UTF8" };
+
+namespace WordCount{
+
+
+    namespace WordConstants{
+        //constexpr std::array<const char*, 2> encoding_array = { "en_US.UTF8", "ru_RU.UTF8" };
+
+        const std::locale loc_en = std::locale("English");
+        const std::locale loc_ru = std::locale("Russian");
+    };
 
 
 class WordCounter 
@@ -18,11 +27,13 @@ public:
     WordCounter(const char* text_path,
                 const char* stop_path,
                 const char* output_path /*= "output.txt"*/,
-                std::locale locale /*= std::locale("English")*/);
+                std::locale locale /*= WordConstants::loc_en*/);
 
     void read_text(const char* text_path);
 
     void read_stop(const char* stop_path);
+
+    void write_chronological(const char* output_path);
 
     void write_alphabetical(const char* output_path);
 
@@ -45,8 +56,8 @@ private:
 
     //inline bool isPunct(char sym)
     //{
-    //    return (m_locale == std::locale("English")) ? isPunct_en(sym) :
-    //           (m_locale == std::locale("Russian")) ? isPunct_ru(sym) : throw("invalid_argument");
+    //    return (m_locale_str == "en") ? isPunct_en(sym) :
+    //           (m_locale_str == "ru") ? isPunct_ru(sym) : throw("invalid_argument");
     //}
 
     //inline bool isPunct_en(char sym)
@@ -63,9 +74,12 @@ private:
     //}
 
 private:
-    std::map<std::string, int> m_counter;
-    std::set<std::string> m_stops;
-    std::set<std::string> m_apostrophe_words; 
+    std::unordered_map<std::string, int> m_counter;
+    std::unordered_set<std::string> m_stops;
+    std::unordered_set<std::string> m_apostrophe_words;
     std::locale m_locale;
+    std::string m_locale_str;
     char m_apostrophe; //TODO зависит от кодировки
+};
+
 };
