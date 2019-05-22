@@ -123,7 +123,7 @@ namespace WordCount{
             sorted_map.push_back(&(*it));
         }
 
-        sort(sorted_map.begin(), sorted_map.end(),
+        std::sort(sorted_map.begin(), sorted_map.end(),
             [](map_ptr lhs, map_ptr rhs) {return rhs->first > lhs->first; });
         std::fstream text_str;
         text_str.imbue(m_locale);
@@ -151,7 +151,7 @@ namespace WordCount{
             sorted_map.push_back(&(*it));
         }
 
-        sort(sorted_map.begin(), sorted_map.end(),
+        std::sort(sorted_map.begin(), sorted_map.end(),
             [](map_ptr lhs, map_ptr rhs) {return rhs->second < lhs->second; });
         std::fstream text_str;
         text_str.imbue(m_locale);
