@@ -1,10 +1,8 @@
 #pragma once
 
 #include "WrappedTypes.h"
+#include "Structs.h"
 
-struct Node;
-using S_ptr = std::shared_ptr<WrappedType>;
-using Node_ptr = std::shared_ptr<Node>;
 
 struct Node
 {
@@ -26,10 +24,10 @@ class Plist
 public:
 
     Plist() {}
-    ~Plist() { clean(); }
+    ~Plist() ;
 
-    Node_ptr begin() { return mBegin; }
-    Node_ptr end() { return mEnd; }
+    inline Node_ptr begin() { return mBegin; }
+    inline Node_ptr end() { return mEnd; }
     void push_back(S_ptr value_);
     void push_front(S_ptr value_);
     void pop_back();

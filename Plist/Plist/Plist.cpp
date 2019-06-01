@@ -1,6 +1,12 @@
 #include "Plist.h"
 #include <memory>
 
+Plist::~Plist()
+{ 
+    try         { clean();      }
+    catch (...) { std::abort(); }
+}
+
 void Plist::push_back(S_ptr value_)
 {
     auto new_ptr = std::make_shared<Node>(Node(value_));
@@ -85,7 +91,7 @@ void Plist::add(S_ptr value_, Node_ptr place_)
 bool Plist::has(S_ptr value_)
 {
     auto it = mBegin;
-    while ((it != nullptr) && (it->current_ptr != value_))
+    while ((it != nullptr) && ((*it->current_ptr) != (*value_)))
         it = it->next_ptr;
     if (it != nullptr)
         return true;
@@ -96,7 +102,7 @@ bool Plist::has(S_ptr value_)
 void Plist::drop(S_ptr value_)
 {
     auto it = mBegin;
-    while ((it != nullptr) && (it->current_ptr != value_))
+    while ((it != nullptr) && ((*it->current_ptr) != (*value_)))
         it = it->next_ptr;
     if (it == nullptr)
         std::cout << "No such value\n";

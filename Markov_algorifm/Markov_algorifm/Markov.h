@@ -1,6 +1,5 @@
 #pragma once
 
-#include <vector>
 #include <list>
 #include <algorithm>
 
@@ -39,7 +38,7 @@ public:
     void step();
 
 private:
-    std::vector<Rule<T>> rules;
+    std::list<Rule<T>> rules;
     std::list<T> init;
     std::list<T> result;
     bool isEnd = false;
@@ -58,7 +57,7 @@ private:
 template <typename T>
 void Markov<T>::addRule(const std::list<T> lhs, const std::list<T> rhs, bool isEnd_)
 {
-    rules.push_back(Rule<T>{lhs, rhs, isEnd_});
+    rules.emplace_back(Rule<T>{lhs, rhs, isEnd_});
 }
 
 template <typename T>

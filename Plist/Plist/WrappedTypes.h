@@ -4,75 +4,76 @@
 #include <stdexcept>
 #include <iostream>
 #include <memory>
+#include <type_traits>
 
-using Complex = std::complex<double>;
+#include "Structs.h"
 
+
+// Классы-обертки типов ниже: WrappedType, WrappedDouble, WrappedInt, WrappedComplex
 
 
 class WrappedType
 {
 public:
     //WrappedType(){}
-    virtual ~WrappedType() {}
+    //virtual ~WrappedType() {}
 
-    virtual void print() = 0;
-    /*virtual bool operator==(std::shared_ptr<WrappedType> rhs) = 0;*/
-    //virtual Complex value() const = 0;
+    virtual void print() const = 0;
+
+    virtual E_typeOfValue typeOfValue() const /*= 0; */ { return E_typeOfValue::ABSTRACT; }
+
 //protected:
 };
-
-//inline std::ostream& operator<<(std::ostream& stre, const WrappedType& a)
-//{
-//    return stre;
-//}
 
 class WrappedDouble : public WrappedType
 {
 protected:
 
-    double mValue;
+    double m_value;
 
 public:
 
-    WrappedDouble(double value_ = 0.) : mValue(value_) {}
+    WrappedDouble(double value_ = 0.) : m_value(value_) {}
 
-    WrappedDouble(const WrappedDouble& rhs)
+    WrappedDouble(const WrappedDouble& rhs)  
     {
-        mValue = rhs.mValue;
+        m_value = rhs.m_value;
     }
 
     WrappedDouble& operator=(const WrappedDouble& rhs)
     {
         if (&rhs == this)
             return *this;
-        mValue = rhs.mValue;
+        m_value = rhs.m_value;
         return *this;
     }
 
-    ~WrappedDouble() { }
-    inline double value() const { return mValue; }
+    //~WrappedDouble() { }
 
-    /*bool operator==(const WrappedType& rhs) { return mValue==rhs.mValue; }*/
-    void print() override
+    virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::DOUBLE; }
+
+    inline double value() const { return m_value; }
+
+    void print() const override
     {
-        std::cout << mValue;
+        std::cout << m_value;
     }
 
     //===================================================================================================
     //Арифметика
-    WrappedDouble operator+(const WrappedDouble& rhs) { return WrappedDouble(mValue + rhs.mValue); }
-    WrappedDouble operator-(const WrappedDouble& rhs) { return WrappedDouble(mValue - rhs.mValue); }
-    WrappedDouble operator*(const WrappedDouble& rhs) { return WrappedDouble(mValue * rhs.mValue); }
+    WrappedDouble operator+(const WrappedDouble& rhs) { return WrappedDouble(m_value + rhs.m_value); }
+    WrappedDouble operator-(const WrappedDouble& rhs) { return WrappedDouble(m_value - rhs.m_value); }
+    WrappedDouble operator*(const WrappedDouble& rhs) { return WrappedDouble(m_value * rhs.m_value); }
     WrappedDouble operator/(const WrappedDouble& rhs)
     {
-        if ((rhs.mValue < 2e-15) && (rhs.mValue > -2e-15))
+        if ((rhs.m_value < 2e-15) && (rhs.m_value > -2e-15))
             throw std::domain_error("Division by zero");
-        return WrappedDouble(mValue / (rhs.mValue));
+        return WrappedDouble(m_value / (rhs.m_value));
     }
 
-    bool operator<(const WrappedDouble& rhs) { return  mValue < rhs.mValue; }
-    bool operator>(const WrappedDouble& rhs) { return  mValue > rhs.mValue; }
-    bool operator==(const WrappedDouble& rhs) { return mValue == rhs.mValue; }
+    //bool operator<(const WrappedDouble& rhs) { return  m_value < rhs.m_value; }
+    //bool operator>(const WrappedDouble& rhs) { return  m_value > rhs.m_value; }
+    //bool operator==(const WrappedDouble& rhs) { return m_value == rhs.m_value; }
 
     template <typename T>
     WrappedDouble operator+(const T rhs) { return WrappedDouble((*this) + WrappedDouble(rhs)); }
@@ -87,11 +88,7 @@ public:
     //===================================================================================================
 };
 
-//inline std::ostream& operator<<(std::ostream& stre, const WrappedDouble& a)
-//{
-//    std::cout << a.value();
-//    return stre;
-//}
+
 
 
 
@@ -100,34 +97,121 @@ class WrappedInt : public WrappedType
 {
 protected:
 
-    int mValue;
+    int m_value;
 
 public:
 
-    WrappedInt(int value_ = 0.) : mValue(value_) {}
+    WrappedInt(int value_ = 0.) : m_value(value_) {}
 
     WrappedInt(const WrappedInt& rhs)
     {
-        mValue = rhs.mValue;;
+        m_value = rhs.m_value;;
     }
 
     WrappedInt& operator=(const WrappedInt& rhs)
     {
         if (&rhs == this)
             return *this;
-        mValue = rhs.mValue;
+        m_value = rhs.m_value;
         return *this;
     }
 
-    ~WrappedInt() {}
-    inline int value() const { return mValue; }
+    //~WrappedInt() {}
 
-    void print() override
+    virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::INT; }
+
+    inline int value() const { return m_value; }
+
+    void print() const override
     {
-        std::cout << mValue;
+        std::cout << m_value;
     }
 
 };
+
+
+
+
+class WrappedComplex : public WrappedType
+{
+protected:
+
+    Complex m_value;
+
+public:
+
+    WrappedComplex(Complex value_ = 0.) : m_value(value_) {}
+
+    WrappedComplex(const WrappedComplex& rhs)
+    {
+        m_value = rhs.m_value;
+    }
+
+    WrappedComplex& operator=(const WrappedComplex& rhs)
+    {
+        if (&rhs == this)
+            return *this;
+        m_value = rhs.m_value;
+        return *this;
+    }
+
+    //~WrappedComplex() {}
+
+    virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::COMPLEX; }
+
+    const Complex& value() const { return m_value; }
+
+    void print() const override
+    {
+        std::cout << m_value;
+    }
+};
+
+
+
+
+//=============================================================================================
+
+// Операторы для сравнения между собой наследников WrappedType
+
+bool operator==(const WrappedType& lhs, const WrappedType& rhs);
+
+bool operator!=(const WrappedType& lhs, const WrappedType& rhs);
+
+template <typename T>
+bool compareWithCast(WrappedType* lhs, T rhs)
+{
+    bool ret;
+    switch (lhs->typeOfValue())
+    {
+    case E_typeOfValue::DOUBLE:
+        ret = (rhs == dynamic_cast<WrappedDouble*>(lhs)->value());
+        break;
+    case E_typeOfValue::INT:
+        ret = (rhs == static_cast<double>(dynamic_cast<WrappedInt*>(lhs)->value()));
+        break;
+    case E_typeOfValue::COMPLEX:
+        ret = (rhs == dynamic_cast<WrappedComplex*>(lhs)->value());
+        break;
+    default:
+        ret = false;
+        break;
+    }
+
+    return ret;
+}
+
+
+//inline std::ostream& operator<<(std::ostream& stre, const WrappedType& a)
+//{
+//    return stre;
+//}
+
+//inline std::ostream& operator<<(std::ostream& stre, const WrappedDouble& a)
+//{
+//    std::cout << a.value();
+//    return stre;
+//}
 
 //inline std::ostream& operator<<(std::ostream& stre, const WrappedInt& a)
 //{
@@ -135,42 +219,10 @@ public:
 //    return stre;
 //}
 
-
-class WrappedComplex : public WrappedType
-{
-protected:
-
-    Complex mValue;
-
-public:
-
-    WrappedComplex(Complex value_ = 0.) : mValue(value_) {}
-
-    WrappedComplex(const WrappedComplex& rhs)
-    {
-        mValue = rhs.mValue;
-    }
-
-    WrappedComplex& operator=(const WrappedComplex& rhs)
-    {
-        if (&rhs == this)
-            return *this;
-        mValue = rhs.mValue;
-        return *this;
-    }
-
-    ~WrappedComplex() {}
-    inline Complex value() const { return mValue; }
-
-    void print() override
-    {
-        std::cout << mValue;
-    }
-};
-
 //
 //inline std::ostream& operator<<(std::ostream& stre, const WrappedComplex& a)
 //{
 //    std::cout << a.value();
 //    return stre;
 //}
+

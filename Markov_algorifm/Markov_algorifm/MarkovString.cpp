@@ -4,7 +4,7 @@
 
 void Markov<char>::addRule(const std::string& lhs, const std::string& rhs, bool isEnd_)
 {
-    rules.push_back(Rule<char>{lhs, rhs, isEnd_});
+    rules.emplace_back(Rule<char>{lhs, rhs, isEnd_});
 }
 
 void Markov<char>::setData(const std::string& word_)

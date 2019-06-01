@@ -21,12 +21,18 @@
     <ClCompile Include="Plist.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+    <ClCompile Include="WrappedTypes.cpp">
+      <Filter>Исходные файлы</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Plist.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="WrappedTypes.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
+    <ClInclude Include="Structs.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
   </ItemGroup>

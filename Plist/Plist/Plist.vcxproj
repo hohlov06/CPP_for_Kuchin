@@ -117,9 +117,11 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Plist.cpp" />
+    <ClCompile Include="WrappedTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Plist.h" />
+    <ClInclude Include="Structs.h" />
     <ClInclude Include="WrappedTypes.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

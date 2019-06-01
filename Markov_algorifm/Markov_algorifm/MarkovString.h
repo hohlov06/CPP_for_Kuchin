@@ -4,7 +4,7 @@
 */
 
 #include <string>
-#include <vector>
+#include <list>
 #include "Markov.h"
 
 
@@ -39,7 +39,7 @@ public:
     void step();
 
 private:
-    std::vector<Rule<char>> rules;
+    std::list<Rule<char>> rules;
     std::string init;
     std::string result;
     bool isEnd = false;

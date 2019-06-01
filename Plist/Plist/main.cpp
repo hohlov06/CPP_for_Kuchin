@@ -1,23 +1,3 @@
-/*
-Вроде работает, но не так, как хотелось бы:
-1)    Невозможно сделать в классе обертки над типом WrappedType функцию, 
-    которая возвращала бы значение поля mValue, виртуальной, т.к. возращаемые типы в базовом классе
-    и наследниках должны быть ковариантны (double и Complex таковыми не являются, например).
-
-    По этой же причине невозможно перегрузить оператор сравнения 
-    (например, bool operator==(const WrappedType* rhs)), т.к. необходимо каким-то образом
-    вернуть значение mValue, но базовый класс не знает об этом поле, а функцию value() нельзя сделать
-    виртуальной(ну или я не знаю как).
-
-    Из-за этого функции has и drop работают не так, как надо. Они ищут в списке объекты не по значению, а по указателю на объект.
-    Т.е. другой объект с другим на него указателем, но с тем же mValue, они не найдут
-
-    Однако выход есть - вместо того, чтобы, например, функция "bool has(Base* value_)" не принимала указатель на базовый класс, 
-    а была шаблонной, но они запрещены. Так хотя бы она сможет сравниваться с объектами одного с ней типа(и не только).
-*/
-
-
-
 #include <iostream>
 
 //#include <vector>
@@ -28,6 +8,7 @@
 #include "Plist.h"
 
 using namespace std;
+
 
 int main()
 {
@@ -52,62 +33,94 @@ int main()
 
     Plist li;
 
-    {
     
 
-
-    li.push_back(dptr1);
-    li.push_back(iptr1);
-    li.push_front(cptr2);
+    li.push_back(dptr1); //2.
+    li.push_back(iptr1); //4
+    li.push_front(cptr2); //<2, 4>
     li.print();
 
-    bool has1 = li.has(dptr1);
-    bool has2 = li.has(dptr3);
+    cout << "is ";
+    cptr1->print(); // <2, 0> 
+    cout << " here: " << li.has(cptr1) << endl; //true
 
     cout << "is ";
-    dptr1->print();
-    cout << " here: " << has1 << endl;
+    dptr3->print(); //15.
+    cout << " here: " << li.has(dptr3) << endl; //false
 
     cout << "is ";
-    dptr3->print();
-    cout << " here: " << has2 << endl;
+    dptr2->print(); //4.
+    cout << " here: " << li.has(dptr2) << endl; //true
 
     //drop удаляет не все, а первый встреченный ptr
-    li.drop(dptr1);
-    li.drop(dptr3);
+
+    li.drop(dptr1); //2.
+    li.drop(dptr3); //15.
     li.print();
     li.clean();
 
-    li.push_back(dptr3);
-    li.push_back(cptr1);
-    li.push_back(dptr3);
-    li.push_front(cptr3);
-    li.push_back(dptr3);
+
+    li.push_back(dptr3); //15.
+    li.push_back(cptr1); //<2,0>
+    li.push_back(dptr3); // 15.
+    li.push_front(cptr3);// <0, 4>
+    li.push_back(dptr3); // 15.
     li.print();
-    li.add(cptr2, li.end()->prev_ptr->prev_ptr);
+    li.add(cptr2, li.end()->prev_ptr->prev_ptr); //<2,4>
     li.print();
-    has1 = li.has(dptr1);
-    has2 = li.has(dptr3);
 
     cout << "is ";
-    dptr1->print();
-    cout << " here: " << has1 << endl;
+    dptr1->print(); //2.
+    cout << " here: " << li.has(dptr1) << endl;
 
     cout << "is ";
-    dptr3->print();
-    cout << " here: " << has2 << endl;
+    dptr3->print(); //15.
+    cout << " here: " << li.has(dptr3) << endl;
 
 
-    li.drop(dptr2);
-    li.drop(dptr3);
+    li.drop(dptr2); //4.
+    li.drop(dptr3); //15.
     li.print();
-    }
+    
     cout << "ok" << endl;
 
 
     li.clean();
     cout << "ok" << endl;
+
+    li.print();
 
     system("pause");
     return 0;
 }
+
+
+
+
+//
+//void test_function(WrappedType* base)
+//{
+//    auto derived = dynamic_cast<WrappedDouble*>(base);
+//    //cout << base->typeOfValue() << " " << derived->typeOfValue();
+//    cout << is_same<decltype(*base), decltype(*derived)>::value << endl;
+//    cout << is_same<decltype(*base), WrappedType&>::value << endl;
+//    cout << is_same<WrappedDouble&, decltype(*derived)>::value << endl;
+//    cout << is_same<WrappedDouble, WrappedDouble>::value << endl;
+//    cout << "======" << endl;
+//    cout << derived->value() << endl;
+//    cout << "ok!" << endl;
+//    cout << "======" << endl;
+//}
+
+//void test_function_sptr(S_ptr base)
+//{
+//    auto derived = dynamic_pointer_cast<WrappedDouble>(base);
+//    //cout << base->typeOfValue() << " " << derived->typeOfValue();
+//    cout << is_same<decltype(*base), decltype(*derived)>::value << endl;
+//    cout << is_same<decltype(*base), WrappedType&>::value << endl;
+//    cout << is_same<WrappedDouble&, decltype(*derived)>::value << endl;
+//    cout << is_same<WrappedDouble, WrappedDouble>::value << endl;
+//    cout << "======" << endl;
+//    cout << derived->value() << endl;
+//    cout << "ok!" << endl;
+//}

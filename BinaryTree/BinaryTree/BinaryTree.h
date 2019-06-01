@@ -46,7 +46,8 @@ public:
 
     ~Tree()
     {
-        destruct(this->root);
+        try 		{ destruct(this->root); }
+        catch (...) { std::abort(); 		} 
     }
 
     void destruct(Node<K, D>* node_)
