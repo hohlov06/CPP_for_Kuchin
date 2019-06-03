@@ -16,7 +16,7 @@ class WrappedType
 {
 public:
     //WrappedType(){}
-    //virtual ~WrappedType() {}
+    virtual ~WrappedType() {}
 
     virtual void print() const = 0;
 
