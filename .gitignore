@@ -72,3 +72,5 @@ GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.
 GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/license (MIT).txt
 GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0.nupkg
 GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/ThirdPartyNotices.txt
+GoogleTests/GoogleTests/x64/Debug/GoogleTests.vcxproj.CopyComplete
+GoogleTests/GoogleTests/x64/Debug/GoogleTests.pch

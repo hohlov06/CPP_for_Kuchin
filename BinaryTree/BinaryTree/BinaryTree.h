@@ -12,7 +12,10 @@ class Node
 {
     friend class Tree<K, D>;
 public:
-    Node(): data(new D) {}
+    Node(): up(nullptr),
+            left(nullptr),
+            right(nullptr), 
+            data(new D) {}
 
     Node(const K key_, const D& data_) : key(key_),
                                          up(nullptr),
@@ -23,8 +26,10 @@ public:
     ~Node() { delete data;}
 
     inline K GetKey() { return key; }
-
     inline D* GetData() { return data; }
+    inline Node* GetUp() { return up; }
+    inline Node* GetLeft() { return left; }
+    inline Node* GetRight() { return right; }
 private:
     K key;
     D* data;
@@ -58,10 +63,17 @@ public:
             destruct(node_->right);
         if ((node_->left == nullptr) && (node_->right == nullptr)) 
         {
-            if (node_->up->left == node_)
-                node_->up->left == nullptr;
-            if (node_->up->right == node_)
-                node_->up->right == nullptr;
+            if (node_->up != nullptr)
+            {
+                if (node_->up->left == node_)
+                    node_->up->left = nullptr;
+                if (node_->up->right == node_)
+                    node_->up->right = nullptr;
+            }
+            else
+            {
+                root = nullptr;
+            }
         }
         delete node_;
     }
