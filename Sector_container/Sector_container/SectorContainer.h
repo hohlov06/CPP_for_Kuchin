@@ -104,17 +104,21 @@ public:
                     else
                     {
                         throwException(sec, __LINE__);
-                        if (it_left == m_cont.begin())
+                        if (it_left == m_cont.begin()) // левый конец sec не может соприкоснуться с отрезком (it_left--), начало
+                                                       // которого лежит слева от левого конца, т.к. такого отрезка нет
+                                                       // пересечение всех отрезков от начального до it_right с отрезком sec
                         {
                             std::pair<LLint, LLint> biggest_sec(sec.first,
                                                                 std::max(sec.second, std::prev(it_right)->second));
                             m_cont.erase(m_cont.begin(), it_right); //TODO проверить
                             m_cont.insert(biggest_sec);
                         }
-                        else
+                        else // левый конец sec может соприкоснуться с отрезком it_left--, начало
+                             // которого лежит слева от левого конца
                         {
-                            if (std::prev(it_left)->second >= sec.first)
+                            if (std::prev(it_left)->second >= sec.first) // левый конец sec соприкасается с "лежащим слева" отрезком
                                 it_left--;
+                            // sec теперь соприкасается с отрезками в интервале (it_left, it_right)
                             std::pair<LLint, LLint> biggest_sec(std::min(sec.first, it_left->first),
                                                                 std::max(sec.second, std::prev(it_right)->second));
                             m_cont.erase(it_left, it_right);//TODO проверить
