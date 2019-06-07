@@ -19,7 +19,7 @@ int main()
     //vec.add({ 6,7 });
     //auto val = vec.find(3);
 
-    SectorContainer<> sect; // шаблонный параметр true - кидаются исключения при пересечении отрезков,
+    SectorContainer<true> sect; // шаблонный параметр true - кидаются исключения при пересечении отрезков,
                                 //                    false(по умолчанию) - слияние пересекающихся в один
     sector a(1, 4);
     sector b(3, 7);
@@ -38,7 +38,7 @@ int main()
     catch (std::exception& e)
     {
         cout << e.what() << endl;
-        std::abort();
+        //std::abort();
     }
 
     system("pause");

@@ -104,12 +104,11 @@ public:
                     else
                     {
                         throwException(sec, __LINE__);
-                        it_right--;
                         if (it_left == m_cont.begin())
                         {
                             std::pair<LLint, LLint> biggest_sec(sec.first,
-                                                                std::max(sec.second, it_right->second));
-                            m_cont.erase(m_cont.begin(), ++it_right); //++? TODO проверить
+                                                                std::max(sec.second, std::prev(it_right)->second));
+                            m_cont.erase(m_cont.begin(), it_right); //TODO проверить
                             m_cont.insert(biggest_sec);
                         }
                         else
@@ -117,8 +116,8 @@ public:
                             if (std::prev(it_left)->second >= sec.first)
                                 it_left--;
                             std::pair<LLint, LLint> biggest_sec(std::min(sec.first, it_left->first),
-                                                                std::max(sec.second, it_right->second));
-                            m_cont.erase(it_left, ++it_right);//++? TODO проверить
+                                                                std::max(sec.second, std::prev(it_right)->second));
+                            m_cont.erase(it_left, it_right);//TODO проверить
                             m_cont.insert(biggest_sec);
                         }
                     }
