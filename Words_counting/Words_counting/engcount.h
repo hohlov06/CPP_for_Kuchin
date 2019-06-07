@@ -57,7 +57,7 @@ private:
     //inline bool isPunct(char sym)
     //{
     //    return (m_locale_str == "en") ? isPunct_en(sym) :
-    //           (m_locale_str == "ru") ? isPunct_ru(sym) : throw("invalid_argument");
+    //           (m_locale_str == "ru") ? isPunct_ru(sym) : throw std::invalid_argument("locale" + m_locale_str + "isn't supported");
     //}
 
     //inline bool isPunct_en(char sym)

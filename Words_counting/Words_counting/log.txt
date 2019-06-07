@@ -1,0 +1,1 @@
+wrong number of parameters of command line, correct format: *exe input.txt result.txt stop_list.txt language(Russian/English)

@@ -179,7 +179,7 @@ namespace WordCount{
         else if (locale == WordConstants::loc_ru)
             m_locale_str = "ru";
         else
-            throw("invalid_argument");
+            throw std::invalid_argument("locale isn't supported");
     }
 
 
@@ -263,7 +263,7 @@ namespace WordCount{
     bool WordCounter::isValid(char sym)
     {
         return (m_locale_str == "en") ? isValid_en(sym) :
-               (m_locale_str == "ru") ? isValid_ru(sym) : throw("invalid_argument");
+               (m_locale_str == "ru") ? isValid_ru(sym) : throw std::invalid_argument("locale" + m_locale_str + "isn't supported");
     }
 
     bool WordCounter::isValid_en(char sym)
