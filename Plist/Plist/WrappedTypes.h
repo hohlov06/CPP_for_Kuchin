@@ -48,7 +48,7 @@ public:
         return *this;
     }
 
-    //~WrappedDouble() { }
+    ~WrappedDouble() { }
 
     virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::DOUBLE; }
 
@@ -116,7 +116,7 @@ public:
         return *this;
     }
 
-    //~WrappedInt() {}
+    ~WrappedInt() {}
 
     virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::INT; }
 
@@ -155,7 +155,7 @@ public:
         return *this;
     }
 
-    //~WrappedComplex() {}
+    ~WrappedComplex() {}
 
     virtual E_typeOfValue typeOfValue() const override { return E_typeOfValue::COMPLEX; }
 
