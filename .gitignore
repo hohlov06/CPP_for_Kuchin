@@ -74,3 +74,8 @@ GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.
 GoogleTests/packages/Microsoft.googletest.v140.windesktop.msvcstl.static.rt-dyn.1.8.0/ThirdPartyNotices.txt
 GoogleTests/GoogleTests/x64/Debug/GoogleTests.vcxproj.CopyComplete
 GoogleTests/GoogleTests/x64/Debug/GoogleTests.pch
+Plist/Debug/Plist.lib
+GoogleTests/Debug/Markov_algorifm.lib
+GoogleTests/Debug/Plist.lib
+GoogleTests/Debug/Time_format.lib
+GoogleTests/Debug/Words_counting.lib
