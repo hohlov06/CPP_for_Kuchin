@@ -40,13 +40,13 @@ namespace DateTime
 
         Time operator+(const Time& rhs) = delete;
 
+        bool operator==(const Time& rhs) const;
+
     protected:
 
         void updateField(int i) override;
 
-        static const std::array<int, 12> m_daysInMonth;
-
-        bool m_dayArgumentPositive;
+        static const std::array<int, 13> m_daysInMonth;
 
         static bool m_format;
 
@@ -72,6 +72,8 @@ namespace DateTime
         TimeInterval operator+(const TimeInterval& rhs);
 
         TimeInterval operator-(const TimeInterval& rhs);
+
+        bool operator==(const TimeInterval& rhs) const;
 
     };
 

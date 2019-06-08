@@ -7,6 +7,10 @@
 
 //#include <array>
 
+#ifdef GOOGLE_TEST_DEBUG
+class TestCase;
+#endif // GOOGLE_TEST_DEBUG
+
 namespace WordCount{
 
 
@@ -21,6 +25,10 @@ namespace WordCount{
 class WordCounter 
 {
 public:
+
+    #ifdef GOOGLE_TEST_DEBUG
+    friend TestCase;
+    #endif // GOOGLE_TEST_DEBUG
 
     //WordCounter() {}
 

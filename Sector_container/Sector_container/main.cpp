@@ -3,13 +3,11 @@
 #include <vector>
 
 #include "SectorContainer.h"
-#include "SimpleVector.h"
 
 using namespace std;
 
 int main()
 {
-    //по умолчанию считаем пару уже упорядоченной, т.е. first <= second
     try
     {
     //SimpleVector vec;
@@ -19,7 +17,7 @@ int main()
     //vec.add({ 6,7 });
     //auto val = vec.find(3);
 
-    SectorContainer<true> sect; // шаблонный параметр true - кидаются исключения при пересечении отрезков,
+    SectorContainer<false> sect; // шаблонный параметр true - кидаются исключения при пересечении отрезков,
                                 //                    false(по умолчанию) - слияние пересекающихся в один
     sector a(1, 4);
     sector b(3, 7);

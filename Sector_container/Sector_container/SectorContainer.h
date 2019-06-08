@@ -184,4 +184,50 @@ public:
         for (auto item : rhs.m_cont)
             m_cont.add(item);
     }
+
+
+    bool empty() const
+    {
+        return m_cont.empty();
+    }
+
+    std::size_t size() const
+    {
+        return m_cont.size();
+    }
+
+    std::size_t max_size() const
+    {
+        return m_cont.max_size();
+    }
+
+    void clear()
+    {
+        m_cont.clear();
+    }
+
+    IterT erase(IterT pos)
+    {
+        return m_cont.erase(pos);
+    }
+
+    IterT erase(IterT first, IterT last)
+    {
+        return m_cont.erase(first, last);
+    }
+
+    //template<bool ExFlag>
+    //bool operator==(const SectorContainer<ExFlag>& rhs) const
+    //{
+    //    return (m_cont == rhs.m_cont);
+    //}
+
+    template<bool ExFlag1, bool ExFlag2>
+    friend bool operator==(const SectorContainer<ExFlag1>& lhs, const SectorContainer<ExFlag2>& rhs);
 };
+
+template<bool ExFlag1, bool ExFlag2>
+bool operator==(const SectorContainer<ExFlag1>& lhs, const SectorContainer<ExFlag2>& rhs)
+{
+    return (lhs.m_cont == rhs.m_cont);
+}
