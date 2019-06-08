@@ -119,7 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="SectorContainer.h" />
-    <ClInclude Include="SimpleVector.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
