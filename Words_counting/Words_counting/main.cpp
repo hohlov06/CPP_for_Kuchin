@@ -1,7 +1,13 @@
+/* Сначала собрать проект "Stemmer", чтобы образовался exe файл.
+* Запускать Words_Counting только после этого
+*/ 
+
 #include "engcount.h"
 
 using namespace std;
 using namespace WordCount;
+
+
 
 int main(int argc, char** argv)
 {
@@ -12,7 +18,7 @@ int main(int argc, char** argv)
         // Раскомментировать этот блок, закомментировать следующий
         //if (argc != 5)
         //    throw std::invalid_argument
-        //    ("wrong number of parameters of command line, correct format: *exe input.txt result.txt stop_list.txt language(Russian/English)");
+        //    ("wrong number of parameters of command line, correct format: *exe input.txt result.txt stop_list.txt language(russian/english)");
         //
         //const char* input = argv[1];
         //const char* result = argv[2];
@@ -23,7 +29,7 @@ int main(int argc, char** argv)
         ////const char* result = R"foo(result.txt)foo";
         ////const char* stop_list = R"foo(stop_list.txt)foo";
         //
-        //WordCounter count(input, stop_list, result, std::locale(locale_str));
+        //WordCounter count(input, stop_list, result, locale_str);
         //===============================================================================================================
 
 
@@ -40,9 +46,9 @@ int main(int argc, char** argv)
         const char* text_path_ru = R"foo(texts/ru_text.txt)foo";
         const char* stop_path_ru = R"foo(texts/ru_stop.txt)foo";
         const char* output_path_ru = R"foo(texts/ru_output.txt)foo";
-        WordCounter count(text_path_en, stop_path_en, output_path_en, std::locale("English"));
-        //WordCounter count(text_path_ru, stop_path_ru, output_path_ru, std::locale("Russian"));
-
+        WordCounter count(text_path_en, stop_path_en, output_path_en, "english");
+        //WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
+        count.write(R"foo(texts/stem_test.txt)foo", "-s-f");
          //===============================================================================================================
     }
     catch (std::exception& e)

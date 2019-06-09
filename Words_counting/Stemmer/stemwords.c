@@ -7,7 +7,7 @@
 #include <string.h> /* for memmove */
 #include <ctype.h>  /* for isupper, tolower */
 
-#include "libstemmer.h"
+#include "Include/libstemmer.h"
 
 const char * progname;
 static int pretty = 1;

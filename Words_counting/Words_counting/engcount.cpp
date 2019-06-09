@@ -1,158 +1,156 @@
 #include <vector>
 #include <utility>
 #include <algorithm>
+#include <cstdio>
 #include "engcount.h"
+#include <experimental/filesystem>
 
-namespace WordCount{
+
+
+
+namespace WordCount {
 
     WordCounter::WordCounter(const char* text_path,
-                             const char* stop_path,
-                             const char* output_path = "output.txt",
-                             std::locale locale = WordConstants::loc_en) : m_apostrophe(-110)// TODO зависит от кодировки
+        const char* stop_path,
+        const char* output_path = "output.txt",
+        std::string locale_str = "english") : m_apostrophe(-110), m_locale_str(locale_str)// TODO зависит от кодировки
     {
-        set_locale(locale);
-        read_stop(stop_path);
-        read_text(text_path);
-        write_sorted(output_path);
+        set_locale(locale_str);
+        count(text_path, stop_path);
+        stem_count();
+        write(output_path, "-w-f");
     }
 
-    void WordCounter::read_text(const char* text_path)
+    void WordCounter::read(const char* text_path, char c = 't')
+    {
+        std::fstream text_str;
+        text_str.imbue(m_locale);
+
+        if (!text_str.is_open())
+        {
+            text_str.clear();
+
+
+            if (c == 't') // text
+            {
+                text_str.open(text_path, std::ios::in);
+                read_text(text_str);
+            }
+            else if (c == 'c') // stop words
+            {
+                text_str.open(text_path, std::ios::in);
+                read_stop(text_str);
+            }
+            else if (c == 's') // stemmed
+            {
+                text_str.open(text_path, std::ios::in);
+                read_stemmed(text_str);
+            }
+            else
+                throw std::invalid_argument("argument for read must be t, c, s");
+
+            text_str.close();
+        }
+    }
+
+
+    void WordCounter::read_text(std::fstream& text_str)
     {
         m_counter.clear();
         m_apostrophe_words.clear();
-
-        std::fstream text_str;
-
-        //system("chcp 1251");
-        //setlocale(LC_ALL, "Russian");
-        text_str.imbue(m_locale);
-
-        if (!text_str.is_open())
+        std::string word;
+        while (text_str >> word)
         {
-            text_str.clear();
-            text_str.open(text_path, std::ios::in);
-            std::string word;
-            while (text_str >> word)
+            //bool qwe = (word == "sixteen-year-old") ? true : false; // for debugging
+            bool apostrophe_flag = false;
+            bool end_word_flag = false;
+
+            for (int i = 0; i < word.size(); i++)
             {
-                //bool qwe = (word == "sixteen-year-old") ? true : false; // for debugging
-                bool apostrophe_flag = false;
-                bool end_word_flag = false;
+                char sym = word.at(i);
+                if (sym == m_apostrophe)
+                    apostrophe_flag = true;
 
-                for (int i = 0; i < word.size(); i++)
+                if (!isValid(sym))
                 {
-                    char sym = word.at(i);
-                    if (sym == m_apostrophe)
-                        apostrophe_flag = true;
-
-                    if (!isValid(sym))
-                    {
-                        word.erase(word.find_first_of(sym), 1);
-                        i--;
-                        end_word_flag = true;
-                    }
-                    else if (end_word_flag == true)
-                    {
-                        if (i > 0)
-                        {
-                            std::string subword = word.substr(0, i);
-                            insertion(subword, apostrophe_flag);
-                            word.erase(0, i);
-                            i = 0;
-                            apostrophe_flag = false;
-                        }
-                        end_word_flag = false;
-                    }
+                    word.erase(word.find_first_of(sym), 1);
+                    i--;
+                    end_word_flag = true;
                 }
-                if (!word.empty())
+                else if (end_word_flag == true)
                 {
-                    insertion(word, apostrophe_flag);
+                    if (i > 0)
+                    {
+                        std::string subword = word.substr(0, i);
+                        insertion(subword, apostrophe_flag);
+                        word.erase(0, i);
+                        i = 0;
+                        apostrophe_flag = false;
+                    }
+                    end_word_flag = false;
                 }
             }
-            remove_apostrophes();
-            text_str.close();
+            if (!word.empty())
+            {
+                insertion(word, apostrophe_flag);
+            }
         }
+        remove_apostrophes();
     }
 
-    void WordCounter::read_stop(const char* stop_path)
+    void WordCounter::read_stop(std::fstream& text_str)
     {
         m_stops.clear();
-        std::fstream text_str;
-        text_str.imbue(m_locale);
-
-        if (!text_str.is_open())
+        std::string word;
+        while (text_str >> word)
         {
-            text_str.clear();
-            text_str.open(stop_path, std::ios::in);
-            std::string word;
-            while (text_str >> word)
-            {
-                for (int i = 0; i < word.size(); i++)
-                    word[i] = std::tolower(word[i], m_locale);
-                m_stops.insert(word);
-            }
-            text_str.close();
+            for (int i = 0; i < word.size(); i++)
+                word[i] = std::tolower(word[i], m_locale);
+            m_stops.insert(word);
         }
     }
 
-
-    void WordCounter::write_chronological(const char* output_path)
+    void WordCounter::read_stemmed(std::fstream& text_str)
     {
-        std::fstream text_str;
-        text_str.imbue(m_locale);
-
-        if (!text_str.is_open())
+        m_stemmed.clear();
+        std::string word;
+        auto it = m_counter.begin();
+        while (text_str >> word)
         {
-            text_str.clear();
-            text_str.open(output_path, std::ios::out);
-            for (const auto& item : m_counter)
-            {
-                text_str << item.first << " " << item.second << '\n';
-            }
-            text_str.close();
+            //for (int i = 0; i < word.size(); i++)
+            //    word[i] = std::tolower(word[i], m_locale);
+            m_stemmed[word] += it->second;
+            it++;
         }
     }
 
-
-    void WordCounter::write_alphabetical(const char* output_path)
+    void WordCounter::sort(std::unordered_map<std::string, int>& counter,
+        std::vector<map_ptr>& sorted_alphabet,
+        std::vector<map_ptr>& sorted_frequent)
     {
-        using map_ptr = std::pair<const std::string, int>*;
-        std::vector<map_ptr> sorted_map;
-        sorted_map.reserve(m_counter.size());
-        for (auto it = m_counter.begin(); it != m_counter.end(); it++)
+        sorted_frequent.clear();
+        sorted_alphabet.clear();
+
+
+        m_sorted_frequent.reserve(counter.size());
+        m_sorted_alphabet.reserve(counter.size());
+        for (auto it = counter.begin(); it != counter.end(); it++)
         {
-            sorted_map.push_back(&(*it));
+            sorted_frequent.push_back(&(*it));
+            sorted_alphabet.push_back(&(*it));
         }
 
-        std::sort(sorted_map.begin(), sorted_map.end(),
-            [](map_ptr lhs, map_ptr rhs) {return rhs->first > lhs->first; });
-        std::fstream text_str;
-        text_str.imbue(m_locale);
 
-        if (!text_str.is_open())
-        {
-            text_str.clear();
-            text_str.open(output_path, std::ios::out);
-            for (map_ptr item : sorted_map)
-            {
-                text_str << item->first << " " << item->second << '\n';
-            }
-            text_str.close();
-        }
-    }
-
-
-    void WordCounter::write_sorted(const char* output_path)
-    {
-        using map_ptr = std::pair<const std::string, int>* ;
-        std::vector<map_ptr> sorted_map;
-        sorted_map.reserve(m_counter.size());
-        for (auto it = m_counter.begin(); it!=m_counter.end(); it++)
-        {
-            sorted_map.push_back(&(*it));
-        }
-
-        std::sort(sorted_map.begin(), sorted_map.end(),
+        std::sort(sorted_frequent.begin(), sorted_frequent.end(),
             [](map_ptr lhs, map_ptr rhs) {return rhs->second < lhs->second; });
+
+        std::sort(sorted_alphabet.begin(), sorted_alphabet.end(),
+            [](map_ptr lhs, map_ptr rhs) {return rhs->first > lhs->first; });
+    }
+
+
+    void WordCounter::write(const char* output_path, std::string s = "-w-f")
+    {
         std::fstream text_str;
         text_str.imbue(m_locale);
 
@@ -160,28 +158,108 @@ namespace WordCount{
         {
             text_str.clear();
             text_str.open(output_path, std::ios::out);
-            for (map_ptr item : sorted_map)
+
+            if (s == "-w-f") // frequency counter
             {
-                text_str << item->first << " " << item->second << '\n';
+                for (map_ptr item : m_sorted_frequent)
+                {
+                    text_str << item->first << " " << item->second << '\n';
+                }
             }
+            else if (s == "-w-a") // alphabetical counter
+            {
+                for (map_ptr item : m_sorted_alphabet)
+                {
+                    text_str << item->first << " " << item->second << '\n';
+                }
+            }
+            else if (s == "-w-c") // chronological counter
+            {
+                for (const auto& item : m_counter)
+                {
+                    text_str << item.first << " " << item.second << '\n';
+                }
+            }
+            else if (s == "-w-o") //only words
+            {
+                for (const auto& item : m_counter)
+                {
+                    text_str << item.first << '\n';
+                }
+            }
+            else if (s == "-s-f") // stemmed by frequence
+            {
+                for (const auto& item : m_sorted_stemmed_frequent)
+                {
+                    text_str << item->first << " " << item->second << '\n';
+                }
+            }
+            else if (s == "-s-a") // stemmed alphabetical
+            {
+                for (const auto& item : m_sorted_stemmed_alphabet)
+                {
+                    text_str << item->first << " " << item->second << '\n';
+                }
+            }
+            else if (s == "-s-c") // stemmed chronological
+            {
+                for (const auto& item : m_stemmed)
+                {
+                    text_str << item.first << " " << item.second << '\n';
+                }
+            }
+            else if (s == "-s-o") // stemmed words only
+            {
+                for (const auto& item : m_stemmed)
+                {
+                    text_str << item.first << '\n';
+                }
+            }
+            else
+                throw std::invalid_argument("parameter for write must be -(1)-(2), where 1=w/c, 2 = c/o/a/f. For example, -w-f");
+
             text_str.close();
         }
     }
 
-
-
-
-    void WordCounter::set_locale(std::locale locale)
+    void WordCounter::count(const char* text_path,
+        const char* stop_path)
     {
-        m_locale = locale;
-        if (locale == WordConstants::loc_en)
-            m_locale_str = "en";
-        else if (locale == WordConstants::loc_ru)
-            m_locale_str = "ru";
+        read(stop_path, 'c');
+        read(text_path, 't');
+        sort(m_counter, m_sorted_alphabet, m_sorted_frequent);
+    }
+
+    void WordCounter::stem_count()
+    {
+        write(R"foo(../Debug/temp_file_for_stem.txt)foo", "-w-o");
+
+        std::string cmd_params = std::experimental::filesystem::current_path().parent_path().string() + "\\Debug\\";
+
+        cmd_params = cmd_params + "Stemmer.exe" + " -l " + m_locale_str +
+            " -i " + cmd_params + "temp_file_for_stem.txt" + " -o " + cmd_params + "temp_file_result.txt";
+
+        char* c_cmd_params = new char[cmd_params.size() + 1];
+        std::copy(cmd_params.begin(), cmd_params.end(), c_cmd_params);
+        c_cmd_params[cmd_params.size()] = '\0';
+        system(c_cmd_params);
+
+        read(R"foo(../Debug/temp_file_result.txt)foo", 's');
+        sort(m_stemmed, m_sorted_stemmed_alphabet, m_sorted_stemmed_frequent);
+        std::remove(R"foo(../Debug/temp_file_for_stem.txt)foo");
+        std::remove(R"foo(../Debug/temp_file_result.txt)foo");
+    }
+
+    void WordCounter::set_locale(std::string locale_str)
+    {
+        m_locale_str = locale_str;
+        if ((locale_str == "english") || (locale_str == "eng") || (locale_str == "en"))
+            m_locale == WordConstants::loc_en;
+        else if ((locale_str == "russian") || (locale_str == "rus") || (locale_str == "ru"))
+            m_locale == WordConstants::loc_ru;
         else
             throw std::invalid_argument("locale isn't supported");
     }
-
 
     void WordCounter::insertion(std::string& word, bool apostrophe_flag)
     {
@@ -195,65 +273,68 @@ namespace WordCount{
 
     void WordCounter::remove_apostrophes() //для английского языка
     {
-        for (const auto& item : m_apostrophe_words)
+        if ((m_locale_str == "english") || (m_locale_str == "eng") || (m_locale_str == "en"))
         {
-            auto pos = item.find_first_of(m_apostrophe);
-
-            std::string prefix;
-            std::string suffix;
-
-            if (pos == 0)
-                ; // ...throw ?
-            else if (pos == (item.size() - 1))
+            for (const auto& item : m_apostrophe_words)
             {
-                //...
-            }
-            else
-            {
-                suffix = item.substr(pos + 1, item.size() - pos - 1);
-                if (suffix == "t")
-                {
-                    suffix = "not";
-                    pos--;
-                }
-                else if ((suffix == "re"))
-                {
-                    suffix = "are";
-                }
-                else if (suffix == "d")
-                {
-                    suffix = "would";
-                }
-                else if (suffix == "ve")
-                {
-                    suffix = "have";
-                }
-                else if (suffix == "ll")
-                {
-                    suffix = "will";
-                }
-                else if (suffix == "m")
-                {
-                    suffix = "am";
-                }
-                else if (suffix == "s")
-                {
-                    suffix = m_apostrophe + suffix;
-                }
-                else continue;
+                auto pos = item.find_first_of(m_apostrophe);
 
-                if (m_stops.find(suffix) == m_stops.end())
-                    m_counter[suffix] += m_counter[item];
+                std::string prefix;
+                std::string suffix;
+
+                if (pos == 0)
+                    ; // ...throw ?
+                else if (pos == (item.size() - 1))
+                {
+                    //...
+                }
+                else
+                {
+                    suffix = item.substr(pos + 1, item.size() - pos - 1);
+                    if (suffix == "t")
+                    {
+                        suffix = "not";
+                        pos--;
+                    }
+                    else if ((suffix == "re"))
+                    {
+                        suffix = "are";
+                    }
+                    else if (suffix == "d")
+                    {
+                        suffix = "would";
+                    }
+                    else if (suffix == "ve")
+                    {
+                        suffix = "have";
+                    }
+                    else if (suffix == "ll")
+                    {
+                        suffix = "will";
+                    }
+                    else if (suffix == "m")
+                    {
+                        suffix = "am";
+                    }
+                    else if (suffix == "s")
+                    {
+                        suffix = m_apostrophe + suffix;
+                    }
+                    else continue;
+
+                    if (m_stops.find(suffix) == m_stops.end())
+                        m_counter[suffix] += m_counter[item];
+                }
+                prefix = item.substr(0, pos);
+                if (suffix == "not")
+                    if (prefix == "ca")
+                        prefix = "can";
+                    else if (prefix == "wo")
+                        prefix = "will";
+                if (m_stops.find(prefix) == m_stops.end())
+                    m_counter[prefix] += m_counter[item];
+                m_counter.erase(item);
             }
-            prefix = item.substr(0, pos);
-            if (suffix == "not")
-                if (prefix == "ca")
-                    prefix = "can";
-                else if (prefix == "wo")
-                    prefix = "will";
-            if (m_stops.find(prefix) == m_stops.end())
-                m_counter[prefix] += m_counter[item];
-            m_counter.erase(item);
         }
     }
 
@@ -262,37 +343,38 @@ namespace WordCount{
 
     bool WordCounter::isValid(char sym)
     {
-        return (m_locale_str == "en") ? isValid_en(sym) :
-               (m_locale_str == "ru") ? isValid_ru(sym) : throw std::invalid_argument("locale" + m_locale_str + "isn't supported");
+        return ((m_locale_str == "english") || (m_locale_str == "eng") || (m_locale_str == "en")) ? isValid_en(sym) :
+            ((m_locale_str == "russian") || (m_locale_str == "rus") || (m_locale_str == "ru")) ? isValid_ru(sym) :
+            throw std::invalid_argument("locale" + m_locale_str + "isn't supported");
     }
 
     bool WordCounter::isValid_en(char sym)
     {
         return (((sym >= 'a') && (sym <= 'z')) ||
-                ((sym >= 'A') && (sym <= 'Z')) ||
-                (sym == m_apostrophe) || //апостроф
-                (sym == '\'') ||
-                ((sym >= '0') && (sym <= '9')) /*||
-                ((sym >= '#') && (sym <= '\''))||
-                ((sym >= '*') && (sym <= '+')) ||
-                (sym == '-')                   ||
-                (sym == '/')                   ||
-                ((sym >= '<') && (sym <= '>')) ||
-                (sym != '@')                     */);
+            ((sym >= 'A') && (sym <= 'Z')) ||
+            (sym == m_apostrophe) || //апостроф
+            (sym == '\'') ||
+            ((sym >= '0') && (sym <= '9')) /*||
+            ((sym >= '#') && (sym <= '\''))||
+            ((sym >= '*') && (sym <= '+')) ||
+            (sym == '-')                   ||
+            (sym == '/')                   ||
+            ((sym >= '<') && (sym <= '>')) ||
+            (sym != '@')                     */);
     }
 
     bool WordCounter::isValid_ru(char sym)
     {
         return (((sym >= 'а') && (sym <= 'я')) ||
-                ((sym >= 'А') && (sym <= 'Я')) ||
-                ((sym >= '0') && (sym <= '9')) /*||
-                ((sym >= '#') && (sym <= '\''))||
-                ((sym >= '*') && (sym <= '+')) ||
-                (sym == '-')                   ||
-                (sym == '/')                   ||
-                ((sym >= '<') && (sym <= '>')) ||
-                (sym != '@')                     */);
+            ((sym >= 'А') && (sym <= 'Я')) ||
+            ((sym >= '0') && (sym <= '9')) /*||
+            ((sym >= '#') && (sym <= '\''))||
+            ((sym >= '*') && (sym <= '+')) ||
+            (sym == '-')                   ||
+            (sym == '/')                   ||
+            ((sym >= '<') && (sym <= '>')) ||
+            (sym != '@')                     */);
     }
 
 
-    };
+};
