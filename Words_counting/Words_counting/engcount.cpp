@@ -287,9 +287,9 @@ namespace WordCount {
     {
         m_locale_str = locale_str;
         if ((locale_str == "english") || (locale_str == "eng") || (locale_str == "en"))
-            m_locale == WordConstants::loc_en;
+            m_locale = WordConstants::loc_en;
         else if ((locale_str == "russian") || (locale_str == "rus") || (locale_str == "ru"))
-            m_locale == WordConstants::loc_ru;
+            m_locale = WordConstants::loc_ru;
         else
             throw std::invalid_argument("locale isn't supported");
     }

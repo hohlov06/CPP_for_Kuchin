@@ -11,12 +11,12 @@ using namespace std;
 using namespace WordCount;
 
 
-const char* text_path_en = R"foo(../../Words_counting/Words_counting/texts/en_text.txt)foo";
-const char* stop_path_en = R"foo(../../Words_counting/Words_counting/texts/en_stop.txt)foo";
-const char* output_path_en = R"foo(../../Words_counting/Words_counting/texts/en_output.txt)foo";
-const char* text_path_ru = R"foo(../../Words_counting/Words_counting/texts/ru_text.txt)foo";
-const char* stop_path_ru = R"foo(../../Words_counting/Words_counting/texts/ru_stop.txt)foo";
-const char* output_path_ru = R"foo(../../Words_counting/Words_counting/texts/ru_output.txt)foo";
+const char* text_path_en = "..\\..\\Words_counting\\Words_counting\\texts\\en_text.txt";
+const char* stop_path_en = "..\\..\\Words_counting\\Words_counting\\texts\\en_stop.txt";
+const char* output_path_en = "..\\..\\Words_counting\\Words_counting\\texts\\en_output.txt";
+const char* text_path_ru = "..\\..\\Words_counting\\Words_counting\\texts\\ru_text.txt";
+const char* stop_path_ru = "..\\..\\Words_counting\\Words_counting\\texts\\ru_stop.txt";
+const char* output_path_ru = "..\\..\\Words_counting\\Words_counting\\texts\\ru_output.txt";
 
 
 class TestCase
@@ -49,7 +49,7 @@ TEST(English, Words)
 TEST(English, Base)
 {
     WordCounter count(text_path_en, stop_path_en, output_path_en, "english");
-    //count.write(R"foo(../../Words_counting/Words_counting/texts/stem_test.txt)foo", "-s-f");
+    //count.write("..\\..\\Words_counting\\Words_counting\\texts\\stem_test.txt", "-s-f");
     TestCase qwe(count);
     EXPECT_EQ(qwe.stemmed.at("ami"), 24);
     EXPECT_EQ(qwe.stemmed.at("tara"), 21);
@@ -65,39 +65,39 @@ TEST(English, Base)
     EXPECT_EQ(qwe.stemmed.at("danc"), 4);
 }
 
-//TEST(Russian, Words)
-//{
-//    WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
-//    TestCase qwe(count);
-//    EXPECT_EQ(qwe.counter.at("вы"), 5);
-//    EXPECT_EQ(qwe.counter.at("книга"), 2);
-//    EXPECT_EQ(qwe.counter.at("мысли"), 2);
-//    EXPECT_EQ(qwe.counter.at("вам"), 2);
-//    EXPECT_EQ(qwe.counter.at("она"), 2);
-//    EXPECT_EQ(qwe.counter.at("соглашаться"), 2);
-//    EXPECT_EQ(qwe.counter.at("что"), 2);
-//    EXPECT_EQ(qwe.counter.at("этой"), 2);
-//    EXPECT_EQ(qwe.counter.at("возможно"), 1);
-//    EXPECT_EQ(qwe.counter.at("волновать"), 1);
-//
-//}
+TEST(Russian, Words)
+{
+    WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
+    TestCase qwe(count);
+    EXPECT_EQ(qwe.counter.at("вы"), 5);
+    EXPECT_EQ(qwe.counter.at("книга"), 2);
+    EXPECT_EQ(qwe.counter.at("мысли"), 2);
+    EXPECT_EQ(qwe.counter.at("вам"), 2);
+    EXPECT_EQ(qwe.counter.at("она"), 2);
+    EXPECT_EQ(qwe.counter.at("соглашаться"), 2);
+    EXPECT_EQ(qwe.counter.at("что"), 2);
+    EXPECT_EQ(qwe.counter.at("этой"), 2);
+    EXPECT_EQ(qwe.counter.at("возможно"), 1);
+    EXPECT_EQ(qwe.counter.at("волновать"), 1);
 
-//TEST(Russian, Base)
-//{
-//    WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
-//    //count.write(R"foo(../../Words_counting/Words_counting/texts/stem_test_ru.txt)foo", "-s-f");
-//    TestCase qwe(count);
-//    EXPECT_EQ(qwe.stemmed.at("вы"), 5);
-//    EXPECT_EQ(qwe.stemmed.at("книга"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("мысли"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("вам"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("она"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("соглашаться"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("что"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("этой"), 2);
-//    EXPECT_EQ(qwe.stemmed.at("возможно"), 1);
-//    EXPECT_EQ(qwe.stemmed.at("волновать"), 1);
-//}
+}
+
+TEST(Russian, Base)
+{
+    WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
+    //count.write("..\\..\\Words_counting\\Words_counting\\texts\\stem_test_ru.txt", "-s-f");
+    TestCase qwe(count);
+    EXPECT_EQ(qwe.stemmed.at("вы"), 5);
+    EXPECT_EQ(qwe.stemmed.at("книга"), 2);
+    EXPECT_EQ(qwe.stemmed.at("мысли"), 2);
+    EXPECT_EQ(qwe.stemmed.at("вам"), 2);
+    EXPECT_EQ(qwe.stemmed.at("она"), 2);
+    EXPECT_EQ(qwe.stemmed.at("соглашаться"), 2);
+    EXPECT_EQ(qwe.stemmed.at("что"), 2);
+    EXPECT_EQ(qwe.stemmed.at("этой"), 2);
+    EXPECT_EQ(qwe.stemmed.at("возможно"), 1);
+    EXPECT_EQ(qwe.stemmed.at("волновать"), 1);
+}
 
 
 
@@ -135,7 +135,7 @@ int main(int argc, char** argv)
 
         WordCounter count(text_path_en, stop_path_en, output_path_en, "english");
         //WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
-        count.write(R"foo(../../Words_counting/Words_counting/texts/stem_test.txt)foo", "-s-f");
+        count.write("..\\..\\Words_counting\\Words_counting\\texts\\stem_test.txt", "-s-f");
          //===============================================================================================================
     }
     catch (std::exception& e)

@@ -13,8 +13,6 @@ class TestCase;
 
 namespace WordCount{
 
-    char* string_to_char(const std::string&);
-
     namespace WordConstants{
         //constexpr std::array<const char*, 2> encoding_array = { "en_US.UTF8", "ru_RU.UTF8" };
 
