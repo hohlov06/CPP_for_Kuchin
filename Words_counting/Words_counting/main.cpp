@@ -25,9 +25,9 @@ int main(int argc, char** argv)
         //const char* stop_list = argv[3];
         //const char* locale_str = argv[4];
         //
-        ////const char* input = R"foo(input.txt)foo";
-        ////const char* result = R"foo(result.txt)foo";
-        ////const char* stop_list = R"foo(stop_list.txt)foo";
+        ////const char* input = "input.txt";
+        ////const char* result = "result.txt";
+        ////const char* stop_list = "stop_list.txt";
         //
         //WordCounter count(input, stop_list, result, locale_str);
         //===============================================================================================================
@@ -40,15 +40,15 @@ int main(int argc, char** argv)
          //===============================================================================================================
         // ƒл€ запуска в visual studio без параметров дл€ командной строки
 
-        const char* text_path_en = R"foo(texts/en_text.txt)foo";
-        const char* stop_path_en = R"foo(texts/en_stop.txt)foo";
-        const char* output_path_en = R"foo(texts/en_output.txt)foo";
-        const char* text_path_ru = R"foo(texts/ru_text.txt)foo";
-        const char* stop_path_ru = R"foo(texts/ru_stop.txt)foo";
-        const char* output_path_ru = R"foo(texts/ru_output.txt)foo";
+        const char* text_path_en = "texts\\en_text.txt";
+        const char* stop_path_en = "texts\\en_stop.txt";
+        const char* output_path_en = "texts\\en_output.txt";
+        const char* text_path_ru = "texts\\ru_text.txt";
+        const char* stop_path_ru = "texts\\ru_stop.txt";
+        const char* output_path_ru = "texts\\ru_output.txt";
         WordCounter count(text_path_en, stop_path_en, output_path_en, "english");
         //WordCounter count(text_path_ru, stop_path_ru, output_path_ru, "russian");
-        count.write(R"foo(texts/stem_test.txt)foo", "-s-f");
+        count.write("texts\\stem_test.txt", "-s-f");
          //===============================================================================================================
     }
     catch (std::exception& e)

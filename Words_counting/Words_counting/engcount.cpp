@@ -10,6 +10,32 @@
 
 namespace WordCount {
 
+#ifdef GOOGLE_TEST_DEBUG
+    std::string projPath = std::experimental::filesystem::current_path().parent_path().parent_path().string()
+        + "\\Words_counting\\Words_counting\\";
+    std::string exePath = std::experimental::filesystem::current_path().parent_path().parent_path().string()
+        + "\\Words_counting\\Debug\\";
+#else
+    std::string projPath = std::experimental::filesystem::current_path().string() + "\\";
+    std::string exePath = std::experimental::filesystem::current_path().parent_path().string() + "\\Debug\\";
+#endif 
+
+    class StringToChar
+    {
+    public:
+        char* c_str;
+        StringToChar(const std::string& str): c_str(new char[str.size() + 1])
+        {
+            std::copy(str.begin(), str.end(), c_str);
+            c_str[str.size()] = '\0';
+        }
+        ~StringToChar()
+        {
+            delete[] c_str;
+        }
+    };
+
+
     WordCounter::WordCounter(const char* text_path,
         const char* stop_path,
         const char* output_path = "output.txt",
@@ -33,17 +59,17 @@ namespace WordCount {
 
             if (c == 't') // text
             {
-                text_str.open(text_path, std::ios::in);
+                text_str.open(projPath + text_path, std::ios::in);
                 read_text(text_str);
             }
             else if (c == 'c') // stop words
             {
-                text_str.open(text_path, std::ios::in);
+                text_str.open(projPath + text_path, std::ios::in);
                 read_stop(text_str);
             }
             else if (c == 's') // stemmed
             {
-                text_str.open(text_path, std::ios::in);
+                text_str.open(projPath + text_path, std::ios::in);
                 read_stemmed(text_str);
             }
             else
@@ -157,7 +183,7 @@ namespace WordCount {
         if (!text_str.is_open())
         {
             text_str.clear();
-            text_str.open(output_path, std::ios::out);
+            text_str.open(projPath + output_path, std::ios::out);
 
             if (s == "-w-f") // frequency counter
             {
@@ -230,24 +256,33 @@ namespace WordCount {
         sort(m_counter, m_sorted_alphabet, m_sorted_frequent);
     }
 
+    class TempFileGuaranteedRemoval
+    {
+        char* m_file;
+    public:
+        TempFileGuaranteedRemoval(char* c_file) : m_file(c_file) {}
+        ~TempFileGuaranteedRemoval()
+        {
+            std::remove(m_file);
+        }
+    };
+
     void WordCounter::stem_count()
     {
         write(R"foo(../Debug/temp_file_for_stem.txt)foo", "-w-o");
 
-        std::string cmd_params = std::experimental::filesystem::current_path().parent_path().string() + "\\Debug\\";
+        StringToChar cmd_input(exePath + "temp_file_for_stem.txt");
+        TempFileGuaranteedRemoval inp( cmd_input.c_str);
+        StringToChar cmd_output(exePath + "temp_file_result.txt");
+        TempFileGuaranteedRemoval outp(cmd_output.c_str);
 
-        cmd_params = cmd_params + "Stemmer.exe" + " -l " + m_locale_str +
-            " -i " + cmd_params + "temp_file_for_stem.txt" + " -o " + cmd_params + "temp_file_result.txt";
+        StringToChar cmd_params(exePath + "Stemmer.exe" + " -l " + m_locale_str +
+            " -i " + exePath + "temp_file_for_stem.txt" + " -o " + exePath + "temp_file_result.txt");
 
-        char* c_cmd_params = new char[cmd_params.size() + 1];
-        std::copy(cmd_params.begin(), cmd_params.end(), c_cmd_params);
-        c_cmd_params[cmd_params.size()] = '\0';
-        system(c_cmd_params);
+        system(cmd_params.c_str);
 
         read(R"foo(../Debug/temp_file_result.txt)foo", 's');
         sort(m_stemmed, m_sorted_stemmed_alphabet, m_sorted_stemmed_frequent);
-        std::remove(R"foo(../Debug/temp_file_for_stem.txt)foo");
-        std::remove(R"foo(../Debug/temp_file_result.txt)foo");
     }
 
     void WordCounter::set_locale(std::string locale_str)
