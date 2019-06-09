@@ -316,10 +316,10 @@ namespace WordCount {
                 std::string suffix;
 
                 if (pos == 0)
-                    ; // ...throw ?
+                    continue; // ...throw ?
                 else if (pos == (item.size() - 1))
                 {
-                    //...
+                    continue;//...
                 }
                 else
                 {
