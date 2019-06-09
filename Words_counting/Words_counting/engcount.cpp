@@ -6,8 +6,6 @@
 #include <experimental/filesystem>
 
 
-
-
 namespace WordCount {
 
 #ifdef GOOGLE_TEST_DEBUG
@@ -19,21 +17,6 @@ namespace WordCount {
     std::string projPath = std::experimental::filesystem::current_path().string() + "\\";
     std::string exePath = std::experimental::filesystem::current_path().parent_path().string() + "\\Debug\\";
 #endif 
-
-    class StringToChar
-    {
-    public:
-        char* c_str;
-        StringToChar(const std::string& str): c_str(new char[str.size() + 1])
-        {
-            std::copy(str.begin(), str.end(), c_str);
-            c_str[str.size()] = '\0';
-        }
-        ~StringToChar()
-        {
-            delete[] c_str;
-        }
-    };
 
 
     WordCounter::WordCounter(const char* text_path,
@@ -264,6 +247,21 @@ namespace WordCount {
         ~TempFileGuaranteedRemoval()
         {
             std::remove(m_file);
+        }
+    };
+	
+	class StringToChar
+    {
+    public:
+        char* c_str;
+        StringToChar(const std::string& str): c_str(new char[str.size() + 1])
+        {
+            std::copy(str.begin(), str.end(), c_str);
+            c_str[str.size()] = '\0';
+        }
+        ~StringToChar()
+        {
+            delete[] c_str;
         }
     };
 
