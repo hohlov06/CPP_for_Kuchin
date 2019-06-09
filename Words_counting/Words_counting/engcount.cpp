@@ -267,12 +267,12 @@ namespace WordCount {
 
     void WordCounter::stem_count()
     {
-        write(R"foo(../Debug/temp_file_for_stem.txt)foo", "-w-o");
-
-        StringToChar cmd_input(exePath + "temp_file_for_stem.txt");
+		StringToChar cmd_input(exePath + "temp_file_for_stem.txt");
         TempFileGuaranteedRemoval inp( cmd_input.c_str);
         StringToChar cmd_output(exePath + "temp_file_result.txt");
         TempFileGuaranteedRemoval outp(cmd_output.c_str);
+
+        write(R"foo(../Debug/temp_file_for_stem.txt)foo", "-w-o");
 
         StringToChar cmd_params(exePath + "Stemmer.exe" + " -l " + m_locale_str +
             " -i " + exePath + "temp_file_for_stem.txt" + " -o " + exePath + "temp_file_result.txt");
