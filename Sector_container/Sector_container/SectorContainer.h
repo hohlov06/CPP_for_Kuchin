@@ -25,15 +25,26 @@ public:
     inline IterT begin() { return m_cont.begin(); }
     inline IterT end() { return m_cont.end(); }
 
-    template <bool flagTrue = exception_flag>
-    void throwException(const sector& sec, int line_, typename std::enable_if<flagTrue, bool>::type = 0)
-    {
-        throw std::domain_error(std::string("segment {") + std::to_string(sec.first) + ", " + 
-                                std::to_string(sec.second) + "} intersection, line: " + std::to_string(line_));
-    }
 
     template <bool flagTrue = exception_flag>
-    void throwException(const sector& sec, int line_, typename std::enable_if<!flagTrue, bool>::type = 0) {}
+    void throwException(const sector& sec, int line_) {}
+
+    template <>
+    void throwException<true>(const sector& sec, int line_)
+    {
+        throw std::domain_error(std::string("segment {") + std::to_string(sec.first) + ", " +
+            std::to_string(sec.second) + "} intersection, line: " + std::to_string(line_));
+    }
+
+    //template <bool flagTrue = exception_flag>
+    //void throwException(const sector& sec, int line_, typename std::enable_if<flagTrue, bool>::type = 0)
+    //{
+    //    throw std::domain_error(std::string("segment {") + std::to_string(sec.first) + ", " + 
+    //                            std::to_string(sec.second) + "} intersection, line: " + std::to_string(line_));
+    //}
+
+    //template <bool flagTrue = exception_flag>
+    //void throwException(const sector& sec, int line_, typename std::enable_if<!flagTrue, bool>::type = 0) {}
 
     void add(sector sec)
     {           

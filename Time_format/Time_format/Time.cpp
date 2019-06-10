@@ -80,14 +80,21 @@ namespace DateTime {
             }
         }
 
-        if ((m_field[i] < lowerLimit) || (m_field[i] > upperLimit))
+        if (i == DAY)
         {
-            int unit = (m_field[i] < lowerLimit) ? -1 : 1;
-            m_field[i] = m_field[i] - unit * upperLimit;
-            m_field[i + 1] += unit;
-
             if ((m_field[i] < lowerLimit) || (m_field[i] > upperLimit))
-                updateField(DAY);
+            {
+                int unit = (m_field[i] < lowerLimit) ? -1 : 1;
+                m_field[i] = m_field[i] - unit * upperLimit;
+                m_field[i + 1] += unit;
+
+                if ((m_field[i] < lowerLimit) || (m_field[i] > upperLimit))
+                    updateField(DAY);
+            }
+        }
+        else
+        {
+            BasicTime::updateField(i);
         }
     }
 
