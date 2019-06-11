@@ -92,7 +92,7 @@ public:
                     if (it_left == it_right)
                     {
                         it_left--;
-                        if ((it_left->second < sec.first) && (sec.second < it_right->first))
+                        if ((it_right!=m_cont.end()) && (it_left->second < sec.first) && (sec.second < it_right->first))
                         {
                             m_cont.insert(sec);
                             return;
